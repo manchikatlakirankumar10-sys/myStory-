@@ -17,12 +17,12 @@ type Adapter struct {
 
 func NewAdapter() *Adapter {
 	// Default to localhost
-	dsn := "host=localhost user=postgres password=postgres dbname=story_db port=5432 sslmode=disable prefer_simple_protocol=true"
+	dsn := "host=localhost user=postgres password=postgres dbname=story_db port=5432 sslmode=disable default_query_exec_mode=simple_protocol"
 
 	// Check if we have individual env vars (e.g. from Render)
 	if os.Getenv("DB_HOST") != "" {
 		dsn = fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=%s sslmode=require prefer_simple_protocol=true",
+			"host=%s user=%s password=%s dbname=%s port=%s sslmode=require default_query_exec_mode=simple_protocol",
 			os.Getenv("DB_HOST"),
 			os.Getenv("DB_USER"),
 			os.Getenv("DB_PASSWORD"),
@@ -31,13 +31,13 @@ func NewAdapter() *Adapter {
 		)
 	} else if url := os.Getenv("DATABASE_URL"); url != "" {
 		dsn = url
-		// Append prefer_simple_protocol=true if not present to avoid prepared statement issues with poolers
-		if !strings.Contains(dsn, "prefer_simple_protocol") {
+		// Append default_query_exec_mode=simple_protocol if not present to avoid prepared statement issues with poolers
+		if !strings.Contains(dsn, "default_query_exec_mode") {
 			separator := "?"
 			if strings.Contains(dsn, "?") {
 				separator = "&"
 			}
-			dsn += separator + "prefer_simple_protocol=true"
+			dsn += separator + "default_query_exec_mode=simple_protocol"
 		}
 	}
 
