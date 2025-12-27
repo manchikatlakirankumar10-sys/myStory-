@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"fmt"
 	"log"
 	"newproject-backend/core/pkg/domain/model"
 	"os"
@@ -14,8 +15,20 @@ type Adapter struct {
 }
 
 func NewAdapter() *Adapter {
+	// Default to localhost
 	dsn := "host=localhost user=postgres password=postgres dbname=story_db port=5432 sslmode=disable"
-	if os.Getenv("DATABASE_URL") != "" {
+
+	// Check if we have individual env vars (e.g. from Render)
+	if os.Getenv("DB_HOST") != "" {
+		dsn = fmt.Sprintf(
+			"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
+			os.Getenv("DB_HOST"),
+			os.Getenv("DB_USER"),
+			os.Getenv("DB_PASSWORD"),
+			os.Getenv("DB_NAME"),
+			os.Getenv("DB_PORT"),
+		)
+	} else if os.Getenv("DATABASE_URL") != "" {
 		dsn = os.Getenv("DATABASE_URL")
 	}
 
