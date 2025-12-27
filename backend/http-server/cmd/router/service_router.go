@@ -20,6 +20,14 @@ func NewRouter(h *handlers.HttpHandler) *gin.Engine {
 	r.POST("/signup", h.Signup)
 	r.POST("/login", h.Login)
 
+	// Health Check / Root
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":  "ok",
+			"message": "Service is live 🚀",
+		})
+	})
+
 	// Private Routes
 	authorized := r.Group("/")
 	authorized.Use(handlers.AuthMiddleware)
