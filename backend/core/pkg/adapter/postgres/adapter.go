@@ -32,7 +32,9 @@ func NewAdapter() *Adapter {
 		dsn = os.Getenv("DATABASE_URL")
 	}
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		PrepareStmt: false, // Disable prepared statements for Supabase transaction pooler compatibility
+	})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
